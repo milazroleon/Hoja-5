@@ -22,12 +22,13 @@ class RPSStrategy(Strategy):
             }
 
         self.opponent_dist = self.compute_distribution(origin, mapping)
+        self._p = np.array(self.opponent_dist, dtype=float)
 
     def decision(self, rng: np.random.Generator) -> int:
         if self.mode == "expected_payoff":
-            values = self.expected_payoff(self.opponent_dist, self.PAYOFF_TABLE)
+            values = self.expected_payoff(self._p, self.PAYOFF_TABLE)
         else:
-            values = self.expected_utility(self.opponent_dist, self.PAYOFF_TABLE, self.utility_fn)
+            values = self.expected_utility(self._p, self.PAYOFF_TABLE, self.utility_fn)
 
         best = np.flatnonzero(values == values.max())
         return int(rng.choice(best))
